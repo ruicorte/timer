@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>timer</title>
+	<style>
+		canvas{
+			image-rendering:crisp-edges;
+			image-rendering:-moz-crisp-edges;
+			image-rendering:-webkit-optimize-contrast;
+			-ms-interpolation-mode:nearest-neighbor;
+			border:5px solid silver;
+			border-radius:10px;
+		}
+		html, body{
+			padding:0;
+			margin:0;
+		}
+		body{
+			text-align:center;
+			background-color:black;
+			color:silver;
+			font-family: verdana;
+		}
+	</style>
+</head>
+<body onload="game.menu()">
+	<h1>timer experiment</h1>
+	<canvas id="cv" width="120" height="420" onclick="game.hit()"></canvas>
+	<script>
+		var game = {
+			colors:['green', 'yellow', 'red'],
+			over: true,
+			cv: document.getElementById('cv'),
+			ctx: this.cv.getContext('2d'),
+			step: Math.round(this.cv.height/100),
+
+			menu: function(){
+				this.cv.width = this.cv.width
+				let x = Math.round(this.cv.width/2), y = Math.round(this.cv.height/2)
+				this.ctx.font = 'bold 25px verdana'
+				this.ctx.textAlign = 'center'
+				this.ctx.textBaseline = 'middle'
+				this.ctx.fillStyle = 'silver'
+				this.ctx.fillText('click', x, y-25)
+				this.ctx.fillText('to', x, y)
+				this.ctx.fillText('start', x, y+25)
+			},
+
+			start: function(){
+				this.over = false
+				this.time = this.cv.height
+				this.frame = this.timeStep = 60
+				this.score = 0
+				this.drawTime()
+				window.requestAnimationFrame(tiktak)
+			},
+			
+			drawTime: function(){
+				this.cv.width = this.cv.width
+				this.ctx.fillStyle = this.time<this.cv.height/3 ? 'red' : this.time<this.cv.height/3*2 ? 'yellow' : 'green'
+				this.ctx.fillRect(0,Math.round(this.cv.height-this.time),Math.round(this.cv.width),Math.round(this.time))
+			},
+			
+			hit: function(){
+				if(this.over)
+					this.start()
+				else{
+					this.score++
+					this.time += 5
+				}
+			}
+		}
+
+		function tiktak(timestamp){				
+			if(!game.over){
+
+				if(game.time <= 0)
+					game.over = true
+				if(game.frame > game.timeStep){
+					game.time-=3
+					game.frame=0
+				}
+				game.frame++
+				game.drawTime()
+				window.requestAnimationFrame(tiktak)
+			} else
+				game.menu()
+		}
+	</script>
+</body>
+</html>
